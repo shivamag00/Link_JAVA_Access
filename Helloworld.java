@@ -30,7 +30,7 @@ public class Helloworld {
  
         // Step 2: Opening database connection
         try {
- 
+            //_____________________________________________________Set the path of the database here _________________
             String msAccDB = "C:\\Users\\user\\Documents\\"
                     + "Database1.accdb";
             String dbURL = "jdbc:ucanaccess://"
