@@ -1,0 +1,185 @@
+package samplebill;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+public class billgenerate extends JFrame implements ActionListener{
+
+	private JPanel contentPane;
+	private JTextField txtid;
+	private JTextField txtname;
+	private JTextField txtage;
+	private JTextField txtmat;
+	private Connection connection = null;
+    private Statement statement = null;
+    private PreparedStatement ps=null;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					billgenerate frame = new billgenerate();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public billgenerate() {
+		createGui();
+	}
+	public void createGui()
+	{
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblPlayerId = new JLabel("PLAYER ID");
+		lblPlayerId.setBounds(60, 55, 70, 25);
+		contentPane.add(lblPlayerId);
+		
+		txtid = new JTextField();
+		txtid.setBounds(204, 58, 96, 19);
+		contentPane.add(txtid);
+		txtid.setColumns(10);
+		
+		JLabel lblName = new JLabel("Name");
+		lblName.setBounds(60, 123, 46, 13);
+		contentPane.add(lblName);
+		
+		txtname = new JTextField();
+		txtname.setBounds(204, 120, 96, 19);
+		contentPane.add(txtname);
+		txtname.setColumns(10);
+		
+		JLabel lblAge = new JLabel("Age");
+		lblAge.setBounds(49, 180, 46, 13);
+		contentPane.add(lblAge);
+		
+		JLabel lblMatches = new JLabel("Matches");
+		lblMatches.setBounds(49, 240, 46, 13);
+		contentPane.add(lblMatches);
+		
+		txtage = new JTextField();
+		txtage.setBounds(204, 177, 96, 19);
+		contentPane.add(txtage);
+		txtage.setColumns(10);
+		
+		txtmat = new JTextField();
+		txtmat.setBounds(204, 237, 96, 19);
+		contentPane.add(txtmat);
+		txtmat.setColumns(10);
+		
+		JButton btnSubmit = new JButton("SUBMIT");
+		btnSubmit.addActionListener(this);
+		btnSubmit.setBounds(341, 203, 85, 21);
+		contentPane.add(btnSubmit);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String id=txtid.getText();
+		String name=txtname.getText();
+		String age=txtage.getText();
+		String match=txtmat.getText();
+		if(id.isEmpty() || name.isEmpty() || age.isEmpty() ||match.isEmpty())
+		{
+			JOptionPane.showMessageDialog(this, "data required");
+		}
+		else
+		{
+			 try {
+				 
+		            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+		        }
+		        catch(ClassNotFoundException cnfex) {
+		 
+		            System.out.println("Problem in loading or "
+		                    + "registering MS Access JDBC driver");
+		            cnfex.printStackTrace();
+		        }
+		 
+		        // Step 2: Opening database connection
+		        try {
+		            //_____________________________________________________Set the path of the database here _________________
+		            String msAccDB = "C:\\Users\\ROHIT BHATIA\\Downloads\\"
+		                    + "Database1.accdb";
+		            String dbURL = "jdbc:ucanaccess://"
+		                    + msAccDB; 
+		 
+		            // Step 2.A: Create and 
+		            // get connection using DriverManager class
+		            connection = DriverManager.getConnection(dbURL); 
+		 
+		            // Step 2.B: Creating JDBC Statement 
+		            statement = connection.createStatement();
+		            		            // Step 2.C: Executing SQL and 
+		            // retrieve data into ResultSet
+		            String sql="delete from Player where PLAYER_ID=?";
+		            ps=connection.prepareStatement(sql);
+		            //statement=connection.createStatement();
+		            ps.setString(1,id);
+		            //ps.setString(2,id);
+		           // ps.setString(3,age);
+		            //ps.setString(4,match);
+		            ps.executeUpdate();
+		            System.out.println("ID\tName\t\t\tAge\tMatches");
+		            System.out.println("==\t================\t===\t=======");
+		 
+		            // processing returned data and printing into console
+		            /*while(resultSet.next()) {
+		                System.out.println(resultSet.getInt(1) + "\t" + 
+		                        resultSet.getString(2) + "\t" + 
+		                        resultSet.getString(3) + "\t" +
+		                        resultSet.getString(4));
+		            }*/
+		        }
+		        catch(SQLException sqlex){
+		            sqlex.printStackTrace();
+		        }
+		        finally {
+		            // Step 3: Closing database connection
+		            try {
+		                if(null != connection) {
+		                    // cleanup resources, once after processing
+		             
+		                    statement.close();
+		                    ps.close();
+		 
+		                    // and then finally close connection
+		                    connection.close();
+		                }
+		            }
+		            catch (SQLException sqlex) {
+		                sqlex.printStackTrace();
+		            }
+		        }
+		    }
+		}
+}
