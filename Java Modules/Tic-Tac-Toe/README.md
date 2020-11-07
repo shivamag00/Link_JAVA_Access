@@ -8,4 +8,4 @@ The bottom left cell has the coordinates (1, 1) and the top right cell has the c
 (1, 1) (2, 1) (3, 1)
 
 * The program will ask you to enter the coordinates where a user wants to make a move. Make the input is in the following form:-
-``(x, y)``
+``(x, y)``.
